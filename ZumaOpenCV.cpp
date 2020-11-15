@@ -120,7 +120,7 @@ cv::Mat getMat(HWND hWND){
 	return mat;
 }
 
-void GetFrog(cv::Mat img, cv::Scalar low, cv::Scalar high) {
+void getFrog(cv::Mat img, cv::Scalar low, cv::Scalar high) {
 	cv::Mat mask;
 	cv::inRange(img, low, high, mask);
 	std::vector<std::vector<cv::Point> > contours;
@@ -150,7 +150,7 @@ void GetFrog(cv::Mat img, cv::Scalar low, cv::Scalar high) {
 	//cv::waitKey();
 }
 
-void GetBalls(cv::Mat img, cv::Scalar low, cv::Scalar high,Color color){
+void getBalls(cv::Mat img, cv::Scalar low, cv::Scalar high,Color color){
 	cv::Mat mask;
 	cv::inRange(img, low, high, mask);
 	std::vector<std::vector<cv::Point> > contours;
@@ -281,43 +281,26 @@ int main() {
 			}
 
 			colour = target.at<cv::Vec3b>(playBTNLocation);
-			std::cout << (int)colour.val[0] << " " << (int)colour.val[1] << " " << (int)colour.val[2] << std::endl;
+
 			if (colour.val[0] == playBTNColour.val[0] && colour.val[1] == playBTNColour.val[1] && colour.val[2] == playBTNColour.val[2]) {
 				click(playBTNLocation, hWND);
 				Sleep(1000);
 			}
 		}
 
-		//cv::Mat pit = cv::imread("img/pit.jpg", cv::IMREAD_COLOR);
-		//remove(target, pit); //remove pit from image
 		bool foundFrog = false;
-		GetFrog(target, frogLow, frogHigh); //get my/forgs location
+		getFrog(target, frogLow, frogHigh); //get my/frogs location
 		if (me.x != 0 && me.y != 0)
 			foundFrog = true;
-		std::system("cls");
-		std::cout << "frog center is at: " << me << std::endl;
-		std::cout << "myball color: " << myBall.color << std::endl;
-		//cv::imshow("target", target);
-		//cv::waitKey();
+
+
 		balls.clear();
-		GetBalls(target, yellowLow, yellowHigh, Color::YELLOW); //find yellow balls
-		GetBalls(target, blueLow, blueHigh, Color::BLUE); //find blue balls
-		GetBalls(target, redLow, redHigh, Color::RED); //find red balls
-		GetBalls(target, greenLow, greenHigh, Color::GREEN); //find green balls
-		GetBalls(target, purpleLow, purpleHigh, Color::PURPLE); // find purple balls
+		getBalls(target, yellowLow, yellowHigh, Color::YELLOW); //find yellow balls
+		getBalls(target, blueLow, blueHigh, Color::BLUE); //find blue balls
+		getBalls(target, redLow, redHigh, Color::RED); //find red balls
+		getBalls(target, greenLow, greenHigh, Color::GREEN); //find green balls
+		getBalls(target, purpleLow, purpleHigh, Color::PURPLE); // find purple balls
 		drawBalls(background);
-
-		if (GetAsyncKeyState(VK_NUMPAD1)) {//Mouseposition
-			POINT p;
-			GetCursorPos(&p);
-			ScreenToClient(hWND, &p);
-			std::cout << "x-position: " << p.x << " | y-position: " << p.y << std::endl;
-
-			//cv::Vec3b colour = target.at<uchar>(cv::Point(p.x, p.x));
-			//std::cout << colour << std::endl;
-
-			Sleep(1000);
-		}
 
 		for (size_t i = 0; i < balls.size() && foundFrog; ++i) {
 			if (balls[i].color == myBall.color) {
@@ -352,9 +335,8 @@ int main() {
 			}
 		}
 
-		// you can do some image processing here
 		cv::imshow("output", background);
-		key = cv::waitKey(30); // you can change wait time
+		key = cv::waitKey(30);
 	}
 
 }
